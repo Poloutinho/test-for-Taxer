@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Certificate Store</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div id="app">
+    <h1>Certificate Store</h1>
+    <div id="drop-area" class="drop-area">
+      <p>Drag & Drop files here</p>
+    </div>
+    <button id="add-certificate-btn" class="add-certificate-btn">Add Certificate</button>
+    <table id="certificate-table" class="certificate-table">
+      <thead>
+        <tr>
+          <th>Certificate</th>
+        </tr>
+      </thead>
+      <tbody id="certificate-list" class="certificate-list">
+        <!-- Certificates will be listed here -->
+      </tbody>
+    </table>
+    <div id="certificate-info" class="certificate-info"></div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/asn1js@5.0.2/dist/asn1.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,22 @@
+{
+  "name": "test-for-taxer",
+  "version": "1.0.0",
+  "description": "test task",
+  "main": "script.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Poloutinho/test-for-Taxer.git"
+  },
+  "author": "Pavlo Polezhay",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Poloutinho/test-for-Taxer/issues"
+  },
+  "homepage": "https://github.com/Poloutinho/test-for-Taxer#readme",
+  "dependencies": {
+    "asn1js": "^3.0.5"
+  }
+}
