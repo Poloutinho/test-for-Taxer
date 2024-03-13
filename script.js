@@ -1,5 +1,3 @@
-
-
 document.addEventListener('DOMContentLoaded', () => {
   const dropArea = document.getElementById('drop-area');
   const certificateList = document.getElementById('certificate-list');
@@ -29,16 +27,17 @@ document.addEventListener('DOMContentLoaded', () => {
   // Handle dropped files
   function handleFiles(files) {
     for (const file of files) {
-      const reader = new FileReader();
-      reader.onload = function (e) {
-        const certificateData = e.target.result;
-        saveCertificate(file.name, certificateData);
-        loadCertificates();
-      };
-      reader.readAsDataURL(file);
+        const reader = new FileReader();
+        reader.onload = function (e) {
+          const certificateData = e.target.result;
+          console.log(certificateData);
+          saveCertificate(file.name, certificateData);
+          loadCertificates();
+        };
+        reader.readAsText(file);
     }
   }
-
+  
   // Save certificate to localStorage
   function saveCertificate(name, data) {
     localStorage.setItem(name, data);
@@ -54,65 +53,53 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   }
 
-// Функція для розбору сертифіката та відображення інформації
-  function parseCertificate(certificateData) {
-    // Декодування сертифіката з формату base64
-    const decodedCertificate = atob(certificateData);
-
-    // Розбір ASN.1 структури сертифіката за допомогою бібліотеки asn1js
-    const asn1 = asn1js.fromBER(stringToArrayBuffer(decodedCertificate));
-    const certificate = new Certificate({ schema: asn1.result });
-
-    // Отримання необхідних полів з сертифіката
-    const serialNumber = certificate.serialNumber.valueBlock.valueHex;
-    // Отримання інших полів інформації про сертифікат
-
-    // Відображення інформації про сертифікат на сторінці
-    displayCertificateInfo(serialNumber, /* інші дані */);
-  }
-
-  // Функція для відображення інформації про сертифікат
-  function displayCertificateInfo(serialNumber, validity, subject, issuer, publicKeyInfo, signatureAlgorithm) {
-    const certificateInfoHTML = `
-        <h2>Certificate Information</h2>
-        <p><strong>Serial Number:</strong> ${serialNumber}</p>
-        <p><strong>Validity:</strong> ${validity}</p>
-        <p><strong>Subject:</strong> ${subject}</p>
-        <p><strong>Issuer:</strong> ${issuer}</p>
-        <p><strong>Public Key Info:</strong> ${publicKeyInfo}</p>
-        <p><strong>Signature Algorithm:</strong> ${signatureAlgorithm}</p>
-    `;
-
-    // Отримуємо елемент, куди ми будемо відображати інформацію про сертифікат
-    const certificateInfoContainer = document.getElementById('certificate-info');
-
-    // Відображаємо інформацію про сертифікат на сторінці
-    certificateInfoContainer.innerHTML = certificateInfoHTML;
-  }
-
-  // Handle dropped files
-  function handleFiles(files) {
-    for (const file of files) {
-        const reader = new FileReader();
-        reader.onload = function (e) {
-            const certificateData = e.target.result;
-            const base64Certificate = btoa(certificateData); // Перетворення в Base64
-            saveCertificate(file.name, base64Certificate); // Збереження сертифіката
-            loadCertificates(); // Оновлення списку сертифікатів
-        };
-        reader.readAsBinaryString(file); // Читання файлу як бінарний рядок
-    }
-  }
-
-  // Обробник події для вибору сертифіката зі списку
+  // Handle certificate click
   certificateList.addEventListener('click', (e) => {
     e.preventDefault();
     if (e.target.tagName === 'A') {
-        const name = e.target.dataset.name;
-        const data = localStorage.getItem(name);
-        parseCertificate(data);
+      const name = e.target.dataset.name;
+      const data = localStorage.getItem(name);
+      parseCertificate(data);
     }
   });
+
+  function parseCertificate(certificateData) {
+    console.log(certificateData);
+    const base64EncodedCertificate = certificateData;
+    const certificateBytes = atob(base64EncodedCertificate);
+    const certificateHex = Array.from(certificateBytes).map(byte => {
+        return ('0' + byte.charCodeAt(0).toString(16)).slice(-2);
+    }).join('');
+    const certificateSchema = pkijs.fromBER(hexToArrayBuffer(certificateHex));
+    const certificate = new pkijs.Certificate({ schema: certificateSchema.result });
+
+    const serialNumber = certificate.serialNumber.valueBlock.valueHex;
+    const issuerName = certificate.issuer.typesAndValues[0].value.valueBlock.value;
+
+    // You can extract other necessary information from the certificate object
+
+    displayCertificateInfo(serialNumber, issuerName);
+  }
+
+  function hexToArrayBuffer(hexString) {
+      const buffer = new ArrayBuffer(hexString.length / 2);
+      const view = new DataView(buffer);
+      for (let i = 0; i < hexString.length; i += 2) {
+          view.setUint8(i / 2, parseInt(hexString.substr(i, 2), 16));
+      }
+      return buffer;
+  }
+
+  // Display certificate information
+  function displayCertificateInfo(serialNumber, issuerName) {
+    const certificateInfoHTML = `
+      <h2>Certificate Information</h2>
+      <p><strong>Serial Number:</strong> ${serialNumber}</p>
+      <p><strong>Issuer Name:</strong> ${issuerName}</p>
+    `;
+
+    certificateInfo.innerHTML = certificateInfoHTML;
+  }
 
   // Handle add certificate button click
   addCertificateBtn.addEventListener('click', () => {
