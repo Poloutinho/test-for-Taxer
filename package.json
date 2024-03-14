@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/Poloutinho/test-for-Taxer#readme",
   "dependencies": {
-    "asn1js": "^3.0.5"
+    "@lapo/asn1js": "^1.2.4",
+    "pkijs": "^3.0.16"
   }
 }
