@@ -35,7 +35,6 @@ document.addEventListener("DOMContentLoaded", () => {
               reader.onload = function (e) {
                 const certificateData = e.target.result;
                 console.log("uploading certificate...");
-                console.log(certificateData);
                 saveCertificate(file.name, certificateData);
                 loadCertificates();
               };
@@ -46,6 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
         // Save certificate to localStorage
         function saveCertificate(name, data) {
           localStorage.setItem(name, data);
+          console.log(data);
         }
       
         // Load certificates from localStorage
@@ -69,8 +69,8 @@ document.addEventListener("DOMContentLoaded", () => {
         });
       
         function parseCertificate(certificateData) {
-          console.log(certificateData);
           const result = ASN1.decode(certificateData);
+          console.log(result);
             if (result.typeName() !== 'SEQUENCE') {
                 throw 'Неправильна структура конверта сертифіката (очікується SEQUENCE)';
             }
@@ -111,4 +111,3 @@ document.addEventListener("DOMContentLoaded", () => {
         });
   }); 
 });
-  
